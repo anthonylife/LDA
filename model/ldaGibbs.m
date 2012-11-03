@@ -33,7 +33,7 @@ Corp.featurefile = '../features/feature.txt';
 Corp.dictfile = '../features/dict.txt';
 Corp.nd = 0;
 Corp.nw = 0;
-
+Corp.N = 0;
 
 % 2------------------------------
 % Loading data source information
@@ -42,9 +42,14 @@ Corp.triple = load(Corp.featurefile);
 Corp.X = spconvert(Corp.triple);
 Corp.nd = size(Corp.X, 1);
 Corp.nw = size(Corp.X, 2);
-Corp.N = size(Corp.triple, 1);
-D = Corp.triple(:,1);
-W = Corp.triple(:,2);
+N = size(Corp.triple, 1);
+for i=1:N,
+    for j=1:Corp.triple(i,3),
+        Corp.N = Corp.N + 1;
+        D(Corp.N) = Corp.triple(i,1);
+        W(Corp.N) = Corp.triple(i,2);
+    end
+end
 
 % Setting doc-topic matrix and topic-word matrix
 % ==============================================
@@ -69,7 +74,7 @@ Nt = sum(dt_mat, 1);
 % ========================
 for i=1:Model.maxIter,
     tic;
-    fprintf('Gibbs sampling...\n');
+    fprintf('Gibbs sampling one iteration...\n');
     for j=1:Corp.N,
         t = Z(j);
         dt_mat(D(j), t) = dt_mat(D(j), t) - 1;
@@ -91,13 +96,15 @@ for i=1:Model.maxIter,
         Nt(t) = Nt(t) + 1;
     end
     toc;
-    Pz = sum(dt_mat, 1)/Corp.N;
-    Pd_z = diag(1./sum(dt_mat, 2)) * dt_mat;
-    Pw_z = diag(1./sum(tw_mat, 1)) * tw_mat';
-    
+    Pz = sum(dt_mat, 1)'/Corp.N;
+    Pd_z = dt_mat * diag(1./sum(dt_mat, 1));
+    Pw_z = tw_mat' * diag(1./sum(tw_mat, 2));
     tic;
-    fprintf('Calculate likelihood...\n');
+    fprintf('Calculate likelihood and perplexity...\n');
     loghood = compLoghood();
+    perplex = compPerplex(loghood);
     toc;
-    fprintf('Current iteration number: %d; Loglikelihood: %f...\n', i, loghood);
+    fprintf('Current iteration number: %d; Loglikelihood: %f; Perplexity: %f...\n', i, loghood, perplex);
+
+
 end

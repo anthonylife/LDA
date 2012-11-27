@@ -1,0 +1,72 @@
+Author: anthonylife 
+Date: 11/28/2012
+============================
+
+Procedure: 
+  1.Extract main text from mails and create word tokens;
+  2.Get the stem of words and remove stop words;
+  3.Run  algorithm
+    3.1 Setting some model parameters and global variables;
+    3.2 Loading documents information;
+    3.3 Randomly initialization and allocation;
+    3.4 gibbs sampling loop for each word;
+    3.5 Evaluation by perplexity and log-likelihood;
+    3.6 Topic explanation.
+
+
+Quick Start
+===========
+ldaGibbs.m:
+    -- Main codes are in this file. It also call other two files, 
+        i.e., comLoghood.m and compPerplex.m, to evaluate the
+        model.
+ldaGibbs_Burn.m:
+    -- Similar to ldaGibbs.m except that it adopt burning metric
+        to accumulate samples from different interations with
+        specified interval to provide better estimation for
+        model parameters.
+
+Directory:
+    | model
+        || compLoghood.m
+            -- Compute log-likelihood of target function in each 
+               iterating step.
+        || compPerplex.m
+            -- Compute perplexity.
+        || explaTopic.m
+            -- Output top words for each topic accroding to their 
+               conditional probability.
+
+How To Run
+==========
+    -- cd model
+    -- matlab (Start matlab software)
+    -- ldaGibbs (ldaGibbs.m)
+
+    Additionaly, we can set variable 'K' value in matlab running
+      environment to modify number of topics.
+
+Final result 
+==================================
+
++=============================================+
+|     Evaluation Result(500 iteratioins)      |
++=============================================+
+| Topic   | Log-likelihood |     Time(s)      |
++---------+----------------+------------------+
+|   3     | 9042171.079067 |   4435.939750    |
++---------+----------------+------------------+
+|   5     | 6759232.499881 |   5132.173656    |
++---------+----------------+------------------+
+|   10    | 4629325.236634 |  15014.044885    | 
++---------+----------------+------------------+
+|   20    | 2716066.412654 |  24330.808795    |
++=============================================+
+
+Note: figures are in root directory.
+
+
+Topic explanation(Top 15 words):
+================================
+
+

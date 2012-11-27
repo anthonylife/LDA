@@ -7,7 +7,7 @@ global Pz; global Pd_z; global Pw_z;
 % Tradeoff between memory and speed
 loghood = 0.0;
 for i=1:Corp.nw
-    loghood = loghood + Corp.X(:,i)'*log(Pd_z*diag(Pz)*Pw_z(i,:)'+1);
+    loghood = loghood + Corp.X(:,i)'*log(Pd_z*diag(Pz)*Pw_z(i,:)');
 end
 
 % Following way will speed the program. However, it will generate a

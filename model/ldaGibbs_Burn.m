@@ -1,5 +1,7 @@
-%LDAGIBBS achieves gibbs sampling algorithm to learn 
-%  model parameters.
+%LDAGIBBS_BURN achieves gibbs sampling algorithm to learn 
+%  model parameters. Different from LDABIGGS, it add burning
+%  procedure to provide a stronger estimation for model para-
+%  meters by adopting more samples.
 %
 %  Procedures:
 %    1.Setting some model parameters and global variables;
@@ -21,6 +23,7 @@ rand('state',sum(100*clock));
 global Model;
 Model.maxIter = 1000;
 Model.burnIter = 500;
+Model.burnInterval = 10;
 Model.diff = 1;
 Model.T = 20;
 %Model.alpha = 50/Model.T;
@@ -58,7 +61,10 @@ global Pz; global Pd_z; global Pw_z;
 global dt_mat; global tw_mat;
 dt_mat = repmat(0, Corp.nd, Model.T);
 tw_mat = repmat(0, Model.T, Corp.nw);
-
+% accumulate samples from different iterations with the 
+%   specified interval
+Model.burn_dt = repmat(0, Corp.nd, Model.T);
+Model.burn_tw = repmat(0, Model.T, Corp.nw);
 
 % 3------------------------------------------
 % Randomly initialization topic for each word
@@ -69,7 +75,6 @@ for i=1:Corp.N,
     tw_mat(Z(i), W(i)) = tw_mat(Z(i), W(i))+1;
 end
 Nt = sum(dt_mat, 1);
-
 
 % 4-----------------------
 % Iterative gibbs Sampling
@@ -104,16 +109,25 @@ for i=1:Model.maxIter,
     loghood = compLoghood();
     perplex = compPerplex(loghood);
     fprintf('Current iteration number: %d; Loglikelihood: %f; Perplexity: %f...\n', i, loghood, perplex);
+
+    % Burning Procedure
+    if i > Model.burnIter && mod(i, Model.burnInterval) == 0,
+        Model.burn_dt = Model.burn_dt + dt_mat;
+        Model.burn_tw = Model.burn_tw + tw_mat;
+    end
 end
 fprintf('Total Time Cost:\n');
 toc;
 
 % 6.Topic explanation
 % ===================
+Pz = sum(Model.burn_dt, 1)'/sum(sum(Model.burn_dt,1));
+Pd_z = Model.burn_dt * diag(1./sum(Model.burn_dt, 1));
+Pw_z = Model.burn_tw' * diag(1./sum(Model.burn_tw, 2));
+
 fprintf('Topic list:\n');
 explaTopic();
 
 fprintf('Perplexity of test data: %f...\n', perplex);
 fprintf('Log-likelihood of test data: %f...\n', loghood);
 fprintf('Finish.\n');
-

@@ -14,7 +14,9 @@
 %  @author:anthonylife
 %  @date:11/2/2012
 
+Restart = 1;
 
+if Restart,
 clear all;
 rand('state',sum(100*clock));
 % 1----------------------
@@ -25,7 +27,8 @@ Model.maxIter = 1000;
 Model.burnIter = 500;
 Model.burnInterval = 10;
 Model.diff = 1;
-Model.T = 20;
+Model.topword=15;
+Model.T = 3;
 %Model.alpha = 50/Model.T;
 Model.alpha = 0.01;
 Model.beta = 0.01;
@@ -118,6 +121,7 @@ for i=1:Model.maxIter,
 end
 fprintf('Total Time Cost:\n');
 toc;
+end
 
 % 6.Topic explanation
 % ===================
@@ -127,7 +131,8 @@ Pw_z = Model.burn_tw' * diag(1./sum(Model.burn_tw, 2));
 
 fprintf('Topic list:\n');
 explaTopic();
-
+loghood = compLoghood();
+perplex = compPerplex(loghood);
 fprintf('Perplexity of test data: %f...\n', perplex);
 fprintf('Log-likelihood of test data: %f...\n', loghood);
 fprintf('Finish.\n');

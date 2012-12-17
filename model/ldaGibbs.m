@@ -22,8 +22,8 @@ global Model;
 Model.maxIter = 1000;
 Model.burnIter = 500;
 Model.diff = 1;
-Model.T = 20;
-%Model.alpha = 50/Model.T;
+Model.topword=15;
+Model.T = 20; %Model.alpha = 50/Model.T;
 Model.alpha = 0.01;
 Model.beta = 0.01;
 

@@ -6,8 +6,8 @@ global Corp; global Model;
 global Pw_z;
 
 dict = textread();
-if Model.K < 10,
-for i=1:Model.K,
+if Model.T < 40,
+for i=1:3,
     [temp, order_idx] = sort(Pw_z(:,i), 'descend');
     fprintf('Topic %d:\n', i);
 

@@ -68,7 +68,7 @@ for i=1:Corp.N,
     dt_mat(D(i), Z(i)) = dt_mat(D(i), Z(i))+1;
     tw_mat(Z(i), W(i)) = tw_mat(Z(i), W(i))+1;
 end
-Nt = sum(dt_mat, 1);
+Nt = sum(tw_mat, 2);
 
 
 % 4-----------------------
@@ -101,7 +101,7 @@ for i=1:Model.maxIter,
     Pd_z = dt_mat * diag(1./sum(dt_mat, 1));
     Pw_z = tw_mat' * diag(1./sum(tw_mat, 2));
     fprintf('Calculate likelihood and perplexity...\n');
-    loghood = compLoghood();
+    [loghood, perword_loghood]= lda_lik();
     perplex = compPerplex(loghood);
     fprintf('Current iteration number: %d; Loglikelihood: %f; Perplexity: %f...\n', i, loghood, perplex);
 end
